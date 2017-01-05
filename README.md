@@ -4,6 +4,28 @@ ViewPager, FragmentPagerAdapter, TabLayout을 사용하기 쉽도록 제작한 �
 
 자세한 사용법은 Sample프로젝트를 참조하세요.
 
+
+##Dependency 설정
+
+[![](https://jitpack.io/v/hsbaewa/HsFragmentPager.svg)](https://jitpack.io/#hsbaewa/HsFragmentPager)
+
+* root 수준의 build.gradle 설정
+<pre><code>
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+</code></pre>
+
+* 프로젝트 단위의 build.gradle 설정
+<pre><code>
+dependencies {
+	        compile 'com.github.hsbaewa:HsFragmentPager:0.0.1'
+	}
+	</code></pre>
+
 ##HsFragmentPagerActivity 사용법
 * HsFragmentPagerActivity 안에 TabLayout과 HsFragmentPager가 내장되어 있으며 create 단계에서 리소스 아이디만 명시하면됨.
 
