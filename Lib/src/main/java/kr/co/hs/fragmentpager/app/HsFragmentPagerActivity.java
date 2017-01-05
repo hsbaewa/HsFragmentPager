@@ -51,6 +51,9 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
         mHsFragmentStatePagerAdapter.notifyDataSetChanged(position);
     }
 
+    public HsFragmentPagerActivityAdapter getHsFragmentStatePagerAdapter() {
+        return mHsFragmentStatePagerAdapter;
+    }
 
     protected abstract void onCreatePageFragment(HsFragmentPagerActivityAdapter mAdapter);
 
