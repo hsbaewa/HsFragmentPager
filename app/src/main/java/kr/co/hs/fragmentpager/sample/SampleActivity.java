@@ -20,22 +20,20 @@ public class SampleActivity extends HsFragmentPagerActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //파라미터 순서 - Activity 레이아웃, TabLayout 리소스 아이디, HsFragmentPager 리소스 아이디
         setContentView(R.layout.activity_sample, R.id.TabLayout, R.id.HsFragmentPager);
     }
 
     @Override
     protected void onCreatePageFragment(HsFragmentPagerActivity.HsFragmentPagerActivityAdapter mAdapter) {
+        //여기서 추가할 Fragment를 추가해줍니다.
         mAdapter.addFragment("타이틀1", TabFragment.newInstance("타이틀1"));
         mAdapter.addFragment("타이틀2", TabFragment.newInstance("타이틀2"));
         mAdapter.addFragment("타이틀3", TabFragment.newInstance("타이틀3"));
     }
 
-
-
     static class TabFragment extends HsFragmentPager.HsPageFragment{
-
         private TextView mTextView;
-
         public static TabFragment newInstance(String value) {
             Bundle args = new Bundle();
             args.putString("value", value);
@@ -43,12 +41,9 @@ public class SampleActivity extends HsFragmentPagerActivity{
             fragment.setArguments(args);
             return fragment;
         }
-
-
         @Override
         public void onCreateView(@Nullable ViewGroup viewGroup, @Nullable Bundle bundle) {
             setContentView(R.layout.fragment_tab);
-
             mTextView = (TextView) findViewById(R.id.textView);
             Bundle args = getArguments();
             mTextView.setText(args.getString("value"));
