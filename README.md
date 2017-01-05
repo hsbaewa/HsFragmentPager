@@ -61,4 +61,14 @@ class TabFragment extends HsFragmentPager.HsPageFragment{
     }
 </code></pre>
 
+*특정 position에 해당하는 fragment를 새로고침하고 싶을때 아래와 같이 호출
+<pre><code>
+//HsFragmentPagerActivity 내장함수
+notifyDataSetChanged((int)새로고침하고 싶은 position);
+</code></pre>
 
+*모든 fragment 새로고침
+<pre><code>
+//HsFragmentPagerActivity 내장함수
+HsFragmentPagerAdapter.notifyDataSetChanged();
+</code></pre>
