@@ -2,12 +2,15 @@ package kr.co.hs.fragmentpager.app;
 
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.hs.app.HsActivity;
+import kr.co.hs.app.HsFragment;
 import kr.co.hs.fragmentpager.HsFragmentPager;
 
 /**
@@ -38,8 +41,11 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
         onCreatePageFragment(mHsFragmentStatePagerAdapter);
         if(mHsFragmentPager != null){
             mHsFragmentPager.setAdapter(mHsFragmentStatePagerAdapter);
-            if(mTabLayout != null)
+            if(mTabLayout != null){
                 mTabLayout.setupWithViewPager(mHsFragmentPager);
+                if(mTabLayout.getVisibility() == View.GONE)
+                    mTabLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -55,12 +61,40 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
         return mHsFragmentStatePagerAdapter;
     }
 
+    @Override
+    public void onBackPressed() {
+        boolean isAllowBackPressed = true;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragmentList = fragmentManager.getFragments();
+        for(Fragment fragment : fragmentList){
+            if(fragment instanceof HsFragmentPager.HsPageFragment){
+                HsFragmentPager.HsPageFragment hsPageFragment = (HsFragmentPager.HsPageFragment) fragment;
+                if(hsPageFragment.isPageVisible()){
+                    boolean isOnBackPressed = hsPageFragment.onBackPressed();
+                    if(isAllowBackPressed){
+                        isAllowBackPressed = isOnBackPressed;
+                    }
+                }
+            }
+            else if(fragment instanceof HsFragment){
+                HsFragment hsFragment = (HsFragment) fragment;
+                boolean isOnBackPressed = hsFragment.onBackPressed();
+                if(isAllowBackPressed){
+                    isAllowBackPressed = isOnBackPressed;
+                }
+            }
+        }
+        if(isAllowBackPressed){
+            super.onBackPressedForce();
+        }
+    }
+
     protected abstract void onCreatePageFragment(HsFragmentPagerActivityAdapter mAdapter);
 
 
 
     public class HsFragmentPagerActivityAdapter extends HsFragmentPager.HsFragmentStatePagerAdapter{
-        final private List<HsFragmentPager.HsPageFragment> mTabs;
+        final private List<HsFragmentPager.IHsPageFragment> mTabs;
         final private List<String> mTabTitle;
 
         public HsFragmentPagerActivityAdapter(FragmentManager fm) {
@@ -70,7 +104,7 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
         }
 
         @Override
-        public HsFragmentPager.HsPageFragment getHsPageFragment(int position) {
+        public HsFragmentPager.IHsPageFragment getHsPageFragment(int position) {
             return mTabs.get(position);
         }
 
@@ -84,7 +118,7 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
             return mTabTitle.get(position);
         }
 
-        public void addFragment(String title, HsFragmentPager.HsPageFragment fragment){
+        public void addFragment(String title, HsFragmentPager.IHsPageFragment fragment){
             mTabTitle.add(title);
             mTabs.add(fragment);
             notifyDataSetChanged();

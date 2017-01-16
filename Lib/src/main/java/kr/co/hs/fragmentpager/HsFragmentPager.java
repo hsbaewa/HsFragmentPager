@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import java.util.HashMap;
 
 import kr.co.hs.app.HsFragment;
+import kr.co.hs.fragmentpager.app.HsFragmentPagerActivity;
 
 /**
  * 생성된 시간 2017-01-04, Bae 에 의해 생성됨
@@ -39,7 +40,7 @@ public class HsFragmentPager extends ViewPager {
     }
 
 
-    
+
     class PageWatcher implements OnPageChangeListener {
 
         private HsFragmentPager mFragmentPager;
@@ -72,14 +73,48 @@ public class HsFragmentPager extends ViewPager {
     }
 
 
-    public static abstract class HsPageFragment extends HsFragment {
-        private int mPagerAdapterPosition;
-        void setPagerAdapterPosition(int position){
+    public static abstract class HsPageFragment extends HsFragment implements IHsPageFragment{
+        int mPagerAdapterPosition;
+
+        @Override
+        public void setPagerAdapterPosition(int position) {
             this.mPagerAdapterPosition = position;
         }
-        int getPagerAdapterPosition(){
+        @Override
+        public int getPagerAdapterPosition(){
             return this.mPagerAdapterPosition;
         }
+
+        @Override
+        public HsFragmentPager getFragmentPager() {
+            HsFragmentPagerActivity activity = (HsFragmentPagerActivity) getHsActivity();
+            if(activity != null)
+                return activity.getHsFragmentPager();
+            else
+                return null;
+        }
+
+        @Override
+        public HsFragmentStatePagerAdapter getFragmentStatePagerAdapter() {
+            HsFragmentPagerActivity activity = (HsFragmentPagerActivity) getHsActivity();
+            if(activity != null)
+                return activity.getHsFragmentStatePagerAdapter();
+            else
+                return null;
+        }
+
+        @Override
+        public boolean isPageVisible() {
+            return this.mPagerAdapterPosition==getFragmentPager().getCurrentItem();
+        }
+    }
+
+    public interface IHsPageFragment{
+        void setPagerAdapterPosition(int position);
+        int getPagerAdapterPosition();
+        HsFragmentPager getFragmentPager();
+        HsFragmentStatePagerAdapter getFragmentStatePagerAdapter();
+        boolean isPageVisible();
     }
 
 
@@ -94,16 +129,16 @@ public class HsFragmentPager extends ViewPager {
 
         @Override
         public Fragment getItem(int position) {
-            HsPageFragment hsFragment = getHsPageFragment(position);
+            IHsPageFragment hsFragment = getHsPageFragment(position);
             hsFragment.setPagerAdapterPosition(position);
             mReloadState.put(position, false);
-            return hsFragment;
+            return (Fragment) hsFragment;
         }
 
         @Override
         public int getItemPosition(Object object) {
-            if(object instanceof HsFragment){
-                HsPageFragment hsFragment = (HsPageFragment) object;
+            if(object instanceof IHsPageFragment){
+                IHsPageFragment hsFragment = (IHsPageFragment) object;
                 if(isReloadState(hsFragment)){
                     setReloadState(hsFragment.getPagerAdapterPosition(), false);
                     return POSITION_NONE;
@@ -112,7 +147,7 @@ public class HsFragmentPager extends ViewPager {
             return super.getItemPosition(object);
         }
 
-        private boolean isReloadState(HsPageFragment fragment){
+        private boolean isReloadState(IHsPageFragment fragment){
             try{
                 int position = fragment.getPagerAdapterPosition();
                 if(position < 0)
@@ -124,7 +159,7 @@ public class HsFragmentPager extends ViewPager {
             }
         }
         private void setReloadState(int position, boolean isReload){
-            mReloadState.put(position, true);
+            mReloadState.put(position, isReload);
         }
 
         public void notifyDataSetChanged(int position) {
@@ -139,6 +174,6 @@ public class HsFragmentPager extends ViewPager {
             super.notifyDataSetChanged();
         }
 
-        public abstract HsPageFragment getHsPageFragment(int position);
+        public abstract IHsPageFragment getHsPageFragment(int position);
     }
 }

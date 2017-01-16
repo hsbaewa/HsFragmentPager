@@ -25,6 +25,11 @@ public class SampleActivity extends HsFragmentPagerActivity{
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onCreatePageFragment(HsFragmentPagerActivity.HsFragmentPagerActivityAdapter mAdapter) {
         //여기서 추가할 Fragment를 추가해줍니다.
         mAdapter.addFragment("타이틀1", TabFragment.newInstance("타이틀1"));
@@ -47,6 +52,16 @@ public class SampleActivity extends HsFragmentPagerActivity{
             mTextView = (TextView) findViewById(R.id.textView);
             Bundle args = getArguments();
             mTextView.setText(args.getString("value"));
+        }
+        @Override
+        public boolean onBackPressed() {
+//            return super.onBackPressed();
+            if(mTextView.getText().toString().equals("뒤로")){
+                return true;
+            }else{
+                mTextView.setText("뒤로");
+                return false;
+            }
         }
     }
 }
