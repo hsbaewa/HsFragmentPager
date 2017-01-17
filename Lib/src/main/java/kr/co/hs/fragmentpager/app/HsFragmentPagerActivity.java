@@ -65,22 +65,29 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
     public void onBackPressed() {
         boolean isAllowBackPressed = true;
         FragmentManager fragmentManager = getSupportFragmentManager();
-        List<Fragment> fragmentList = fragmentManager.getFragments();
-        for(Fragment fragment : fragmentList){
-            if(fragment instanceof HsFragmentPager.HsPageFragment){
-                HsFragmentPager.HsPageFragment hsPageFragment = (HsFragmentPager.HsPageFragment) fragment;
-                if(hsPageFragment.isPageVisible()){
-                    boolean isOnBackPressed = hsPageFragment.onBackPressed();
-                    if(isAllowBackPressed){
-                        isAllowBackPressed = isOnBackPressed;
+        if(fragmentManager != null){
+            List<Fragment> fragmentList = fragmentManager.getFragments();
+            if(fragmentList != null){
+                for(Fragment fragment : fragmentList){
+                    if(fragment == null)
+                        continue;
+
+                    if(fragment instanceof HsFragmentPager.HsPageFragment){
+                        HsFragmentPager.HsPageFragment hsPageFragment = (HsFragmentPager.HsPageFragment) fragment;
+                        if(hsPageFragment.isPageVisible()){
+                            boolean isOnBackPressed = hsPageFragment.onBackPressed();
+                            if(isAllowBackPressed){
+                                isAllowBackPressed = isOnBackPressed;
+                            }
+                        }
                     }
-                }
-            }
-            else if(fragment instanceof HsFragment){
-                HsFragment hsFragment = (HsFragment) fragment;
-                boolean isOnBackPressed = hsFragment.onBackPressed();
-                if(isAllowBackPressed){
-                    isAllowBackPressed = isOnBackPressed;
+                    else if(fragment instanceof HsFragment){
+                        HsFragment hsFragment = (HsFragment) fragment;
+                        boolean isOnBackPressed = hsFragment.onBackPressed();
+                        if(isAllowBackPressed){
+                            isAllowBackPressed = isOnBackPressed;
+                        }
+                    }
                 }
             }
         }
@@ -88,6 +95,11 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
             super.onBackPressedForce();
         }
     }
+
+    public void setOffscreenPageLimit(int size){
+        mHsFragmentPager.setOffscreenPageLimit(size);
+    }
+
 
     protected abstract void onCreatePageFragment(HsFragmentPagerActivityAdapter mAdapter);
 
