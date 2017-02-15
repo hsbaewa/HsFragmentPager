@@ -35,11 +35,15 @@ public abstract class HsFragmentPagerActivity extends HsActivity {
 
     public void setContentView(@LayoutRes int layoutResID, int tabLayout, int hsFragmentPagerID) {
         super.setContentView(layoutResID);
-        mTabLayout = (TabLayout) findViewById(tabLayout);
-        mHsFragmentPager = (HsFragmentPager) findViewById(hsFragmentPagerID);
+        setTab((TabLayout) findViewById(tabLayout), (HsFragmentPager) findViewById(hsFragmentPagerID));
+    }
 
-        onCreatePageFragment(mHsFragmentStatePagerAdapter);
+    public void setTab(TabLayout tabLayout, HsFragmentPager hsFragmentPager){
+        this.mTabLayout = tabLayout;
+        this.mHsFragmentPager = hsFragmentPager;
+
         if(mHsFragmentPager != null){
+            onCreatePageFragment(mHsFragmentStatePagerAdapter);
             mHsFragmentPager.setAdapter(mHsFragmentStatePagerAdapter);
             if(mTabLayout != null){
                 mTabLayout.setupWithViewPager(mHsFragmentPager);
